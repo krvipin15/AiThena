@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+firebase-admin
+PyPDF2
+yt-dlp
+requests
+google-cloud-firestore
+python-multipart
+flask-cors
+docling 
