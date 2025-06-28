@@ -106,6 +106,7 @@ The server will start at: **http://127.0.0.1:8000**
 - **Concise Summarization** - Generate brief, accurate summaries
 - **Flashcard Generation** - Create high-quality Q&A flashcards
 - **MCQ Generation** - Produce well-structured multiple choice questions
+- **Adaptive Feedback** - Analyze quiz results and provide personalized feedback with study suggestions
 - **PDF Processing** - Upload and process PDFs with Docling
 - **YouTube Integration** - Process YouTube links (transcription placeholder)
 - **Firebase Integration** - Authentication and data storage ready

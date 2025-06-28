@@ -174,6 +174,16 @@ def generate_mcq_from_text(text: str):
 
 def generate_feedback(quiz_results: str):
     """Generate personalized feedback using Granite"""
-    prompt = f"Provide brief feedback on these quiz results: {quiz_results[:500]}"
-    
-    return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=200) 
+    prompt = f"""Analyze these quiz results and provide personalized feedback:
+
+Quiz Results: {quiz_results}
+
+Please provide constructive feedback that includes:
+1. What the student did well (strengths)
+2. Areas for improvement (weaknesses) 
+3. Specific study suggestions and resources
+4. Encouragement and motivation
+
+Format your response in a friendly, supportive tone with clear sections."""
+
+    return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=400) 

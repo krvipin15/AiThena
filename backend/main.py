@@ -64,8 +64,16 @@ async def generate_mcq(text: str = Form(...), token: str = Form("test")):
     return {"mcqs": mcqs}
 
 @app.post("/feedback", response_model=FeedbackResponse)
-async def feedback(user_id: str = Form(...), quiz_results: str = Form(...), token: str = Form("test")):
+async def feedback(user_id: str = Form(...), quiz_results: str = Form(...), token: str = Form(...)):
     # verify_firebase_token(token)  # Temporarily commented for testing
-    feedback = generate_feedback(quiz_results)
-    store_user_feedback(user_id, feedback)
-    return {"feedback": feedback} 
+    try:
+        feedback_text = generate_feedback(quiz_results)
+        # Try to store feedback, but don't fail if Firebase is not configured
+        try:
+            store_user_feedback(user_id, feedback_text)
+        except Exception as e:
+            print(f"Warning: Could not store feedback in Firebase: {e}")
+        return {"feedback": feedback_text}
+    except Exception as e:
+        print(f"Error generating feedback: {e}")
+        return {"feedback": "Sorry, there was an error generating feedback. Please try again."} 
