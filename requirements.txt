@@ -8,4 +8,6 @@ google-cloud-firestore
 python-multipart
 flask-cors
 docling
-ibm-watsonx-ai 
+pathlib
+ibm-watsonx-ai
+youtube_transcript_api
