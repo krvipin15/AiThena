@@ -8,9 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 FIREBASE_KEY_PATH = os.getenv("FIREBASE_KEY_PATH", "firebase_service_account.json")
+cred = credentials.Certificate(FIREBASE_KEY_PATH)
+firebase_admin.initialize_app(cred)
 
 if not firebase_admin._apps:
-    cred = credentials.Certificate(FIREBASE_KEY_PATH)
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
