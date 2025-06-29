@@ -1,18 +1,127 @@
-# Ignore Python virtual environment
-venv/
-
-# Ignore VSCode settings
-.vscode/
-
-# Ignore macOS system files
-.DS_Store
-
-# Ignore Python bytecode
-__pycache__/
-*.pyc
-
-# Ignore environment variables file
+# Environment and Configuration
 .env
+.env.local
+.env.production
+config.json
+*.env
+*.env.*
 
-# Ignore Firebase service account key
-backend/firebase_service_account.json 
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database.db
+users.db
+
+# Logs
+*.log
+logs/
+*.out
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.idea/workspace.xml
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# API Keys and Secrets
+api_keys.txt
+secrets.json
+credentials.json
+
+# Large data files
+data/user_data/
+data/uploads/
+data/temp/
+data/youtube_transcript/*.txt
+data/pdf_summaries/*.json
+data/generated_content/
+data/youtube_transcript/
+data/pdf_summaries/
+data/user_uploads/
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Cache and testing
+.cache/
+*.cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Backup files
+*.bak
+*.backup
+
+# Development files
+local_config.py
+test_data/
+development_notes.md
+debug.log
+
+# Runtime files
+*.pid
+*.sock
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Environment-specific
+.env.development
+.env.staging
+.env.production
