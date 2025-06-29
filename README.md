@@ -1,8 +1,6 @@
-# 🤖 AiThena - AI-Powered Learning Platform
+# AiThena
 
-> **Personalized AI tutor powered by IBM Granite 3.3 & Watsonx.ai**
-
-AiThena transforms learning through intelligent AI-driven study materials generation. Upload PDFs, analyze YouTube videos, and get personalized flashcards, quizzes, and feedback powered by IBM's latest Granite 3.3 models.
+AiThena is a personalized AI tutor platform powered by IBM watsonx Granite 3.3 and FastAPI. It generates adaptive study materials—summaries, flashcards, MCQs, and feedback—from PDFs and YouTube videos, with secure user authentication and a modern Streamlit frontend.
 
 ---
 
@@ -15,92 +13,66 @@ AiThena transforms learning through intelligent AI-driven study materials genera
 - **📝 Quiz Generation**: Multiple-choice questions with instant feedback
 - **📊 Personalized Feedback**: Adaptive learning recommendations
 - **🔐 Secure Authentication**: User registration with bcrypt encryption
-- **🎨 Modern UI**: Two frontend options - Web & Streamlit
 
 ---
 
 ## 🏗️ Project Structure
-
 ```
 AiThena/
-├── backend/                 # FastAPI backend services
-│   ├── main.py             # Main FastAPI application
-│   ├── granite.py          # IBM Granite 3.3 integration
-│   ├── auth.py             # Authentication logic
-│   └── database.py         # SQLite database operations
-├── frontend-web/           # Modern web frontend (HTML/CSS/JS)
-│   ├── dashboard.html      # Main dashboard interface
-│   ├── login.html         # User authentication
-│   ├── js/dashboard.js    # Frontend JavaScript logic
-│   └── assets/            # Logo and static assets
-├── frontend/              # Streamlit frontend (Alternative)
-│   └── app.py            # Streamlit application
-├── data/                 # Generated content storage
-├── .env.example         # Environment variables template
-└── requirements.txt     # Python dependencies
+├── backend/         # FastAPI backend (auth, AI, processing)
+├── frontend/        # Streamlit frontend (UI, pages)
+├── data/            # User DB and transcripts
+├── requirements.txt # Python dependencies
+└── README.md
 ```
-
 ---
 
-## 🚀 Quick Setup
+## Setup Instructions
 
-### Prerequisites
-
-- Python 3.8+
-- IBM Cloud account with Watsonx.ai access
-- 32GB RAM recommended for optimal performance
-
-### 1. Clone Repository
-
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/krvipin15/AiThena.git
+git clone <repo-url>
 cd AiThena
 ```
 
-### 2. Environment Setup
-
+### 2. Create and Activate a Virtual Environment
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate
+```
 
-# Install dependencies
+### 3. Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure IBM Granite
-
+### 4. Configure Environment Variables
+Copy the example file and add your IBM watsonx credentials:
 ```bash
-# Copy environment template
-cp .env.example .env
-
-# Edit .env with your IBM credentials:
-# GRANITE_API_KEY=your_ibm_api_key
-# GRANITE_API_URL=https://us-south.ml.cloud.ibm.com
-# PROJECT_ID=your_project_id
+cp env.example .env
+```
+Edit `.env` and set:
+```
+GRANITE_API_KEY=your_ibm_api_key
+GRANITE_API_URL=https://us-south.ml.cloud.ibm.com
+PROJECT_ID=your_project_id
 ```
 
-### 4. Start Backend
-
+### 5. Start the Backend
 ```bash
 uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-### 5. Choose Your Frontend
-
-#### Option A: Modern Web Interface (Recommended)
-
-```bash
-# Open in browser
-http://localhost:8000/index.html
-```
-
-#### Option B: Streamlit Interface
-
+### 6. Start the Frontend
 ```bash
 cd frontend
 streamlit run app.py
 ```
+
+### 7. Access the App
+- Frontend: [http://localhost:8501](http://localhost:8501)
+- Backend API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+- API Docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 ---
 
@@ -126,9 +98,7 @@ streamlit run app.py
 - **AI Engine**: IBM Granite 3.3 (Watsonx.ai)
 - **Backend**: FastAPI, Python 3.8+
 - **Database**: SQLite3 with bcrypt encryption
-- **Frontend Options**:
-  - Modern Web (HTML5/CSS3/JavaScript)
-  - Streamlit (Python-based)
+- **Frontend**: Streamlit (Python-based)
 - **APIs**: IBM Watsonx.ai REST APIs
 - **Security**: bcrypt password hashing, session management
 
@@ -141,47 +111,6 @@ streamlit run app.py
 - Input validation and sanitization
 - Session-based security
 - SQLite3 with prepared statements
-
----
-
-## 📊 IBM Granite 3.3 Integration
-
-AiThena leverages IBM's latest Granite 3.3 models for:
-
-- **Text Summarization**: Advanced document processing
-- **Question Generation**: Intelligent MCQ creation
-- **Feedback Analysis**: Personalized learning insights
-- **Content Processing**: Multi-format content understanding
-
----
-
-## 🎨 Frontend Options
-
-### Web Interface
-
-- Modern, responsive design
-- Interactive dashboard
-- Real-time feedback
-- Mobile-friendly
-
-### Streamlit Interface
-
-- Python-based UI
-- Quick prototyping
-- Data science friendly
-- Simple deployment
-
-**Choose either frontend based on your preference - both offer full functionality!**
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/enhancement`)
-3. Commit changes (`git commit -m 'Add feature'`)
-4. Push to branch (`git push origin feature/enhancement`)
-5. Open Pull Request
 
 ---
 
