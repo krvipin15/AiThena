@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AiThena – Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              inter: ["Inter", "sans-serif"],
+              noto: ["Noto Sans", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                bg: "#f8f9fc",
+                border: "#d4d9e3",
+                text: "#101319",
+                subtext: "#5b6c8b",
+                primary: "#2b6de7",
+                tab: "#b0c3e7",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: Inter, "Noto Sans", sans-serif;
+      }
+      .active-tab {
+        border-bottom-width: 3px !important;
+        border-color: #b0c3e7 !important;
+        color: #101319 !important;
+      }
+      .inactive-tab {
+        border-bottom-width: 3px !important;
+        border-color: transparent !important;
+        color: #5b6c8b !important;
+      }
+
+      /* Toast Styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 400px;
+        padding: 16px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+      }
+      .toast.show {
+        transform: translateX(0);
+      }
+      .toast.success {
+        background-color: #10b981;
+      }
+      .toast.error {
+        background-color: #ef4444;
+      }
+      .toast.info {
+        background-color: #3b82f6;
+      }
+
+      .loading {
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .oauth-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d4d9e3;
+        border-radius: 12px;
+        background: white;
+        font-weight: 600;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .oauth-btn:hover {
+        background: #f8f9fc;
+        border-color: #b0c3e7;
+      }
+    </style>
+    <link rel="stylesheet" href="css/navbar.css" />
+  </head>
+
+  <body class="bg-brand-bg text-brand-text">
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Replace the header section in your login.html -->
+    <nav class="aithena-navbar">
+      <div class="aithena-logo-section">
+        <img
+          src="assets/logo.png"
+          alt="AiThena Logo"
+          class="aithena-logo-img"
+        />
+        <h2 class="aithena-brand-text">AiThena</h2>
+      </div>
+
+      <div class="aithena-nav-right">
+        <div class="aithena-nav-links">
+          <a href="index.html" class="aithena-nav-link">Home</a>
+          <a href="#about" class="aithena-nav-link">About</a>
+          <a href="#features" class="aithena-nav-link">Features</a>
+          <a href="#contact" class="aithena-nav-link">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LOGIN CARD -->
+    <main class="flex justify-center px-4 py-10">
+      <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 space-y-6">
+        <h2 class="text-2xl font-bold text-center">Welcome to AiThena 👋</h2>
+
+        <!-- OAuth Login Options -->
+        <div class="space-y-3">
+          <button onclick="loginWithGoogle()" class="oauth-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path
+                fill="#4285f4"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="#34a853"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="#fbbc05"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="#ea4335"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            Continue with Google
+          </button>
+
+          <button onclick="loginWithGitHub()" class="oauth-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.300 24 12c0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+            Continue with GitHub
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-brand-border"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-brand-subtext"
+              >or continue with email</span
+            >
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-brand-border gap-8 px-4">
+          <a
+            href="#"
+            id="showLoginTab"
+            class="tab-link active-tab pb-[13px] pt-4 text-sm font-bold tracking-[0.015em]"
+            >Sign In</a
+          >
+          <a
+            href="#"
+            id="showRegisterTab"
+            class="tab-link inactive-tab pb-[13px] pt-4 text-sm font-bold tracking-[0.015em]"
+            >Create Account</a
+          >
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection">
+          <form id="loginForm" class="space-y-4 px-4 pt-2">
+            <div>
+              <label class="block text-base font-medium leading-normal pb-1"
+                >Email</label
+              >
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                class="form-input w-full rounded-xl h-12 px-4 text-base bg-brand-bg border border-brand-border placeholder:text-brand-subtext focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-base font-medium leading-normal pb-1"
+                >Password</label
+              >
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter your password"
+                class="form-input w-full rounded-xl h-12 px-4 text-base bg-brand-bg border border-brand-border placeholder:text-brand-subtext focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              id="loginBtn"
+              class="w-full bg-brand-tab text-brand-text text-sm font-bold py-3 rounded-full hover:bg-brand-primary hover:text-white transition"
+            >
+              <span id="loginBtnText">Sign In</span>
+              <span id="loginBtnSpinner" class="hidden">🔄 Signing In...</span>
+            </button>
+          </form>
+          <p class="text-sm text-center text-brand-subtext mt-2">
+            Don't have an account?
+            <a
+              href="#"
+              id="showRegister"
+              class="text-brand-primary font-medium hover:underline"
+              >Sign up</a
+            >
+          </p>
+        </div>
+
+        <!-- Register Section -->
+        <div id="registerSection" style="display: none">
+          <form id="registerForm" class="space-y-4 px-4 pt-2">
+            <div>
+              <label class="block text-base font-medium leading-normal pb-1"
+                >Email</label
+              >
+              <input
+                id="regEmail"
+                type="email"
+                placeholder="Enter your email"
+                class="form-input w-full rounded-xl h-12 px-4 text-base bg-brand-bg border border-brand-border placeholder:text-brand-subtext focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-base font-medium leading-normal pb-1"
+                >Password</label
+              >
+              <input
+                id="regPassword"
+                type="password"
+                placeholder="Enter your password (min 6 characters)"
+                class="form-input w-full rounded-xl h-12 px-4 text-base bg-brand-bg border border-brand-border placeholder:text-brand-subtext focus:ring-2 focus:ring-brand-primary focus:border-brand-primary"
+                minlength="6"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              id="registerBtn"
+              class="w-full bg-brand-tab text-brand-text text-sm font-bold py-3 rounded-full hover:bg-brand-primary hover:text-white transition"
+            >
+              <span id="registerBtnText">Register</span>
+              <span id="registerBtnSpinner" class="hidden"
+                >🔄 Creating Account...</span
+              >
+            </button>
+          </form>
+          <p class="text-sm text-center text-brand-subtext mt-2">
+            Already have an account?
+            <a
+              href="#"
+              id="showLogin"
+              class="text-brand-primary font-medium hover:underline"
+              >Sign In</a
+            >
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const loginSection = document.getElementById("loginSection");
+      const registerSection = document.getElementById("registerSection");
+      const loginForm = document.getElementById("loginForm");
+      const registerForm = document.getElementById("registerForm");
+      const showRegister = document.getElementById("showRegister");
+      const showLogin = document.getElementById("showLogin");
+      const showLoginTab = document.getElementById("showLoginTab");
+      const showRegisterTab = document.getElementById("showRegisterTab");
+      const tabLinks = document.querySelectorAll(".tab-link");
+
+      // OAuth Functions
+      function loginWithGoogle() {
+        showToast("🚀 Google OAuth integration coming soon!", "info");
+        // Placeholder for Google OAuth
+        // You can implement actual Google OAuth here later
+      }
+
+      function loginWithGitHub() {
+        showToast("🚀 GitHub OAuth integration coming soon!", "info");
+        // Placeholder for GitHub OAuth
+        // You can implement actual GitHub OAuth here later
+      }
+
+      // Toast function
+      function showToast(message, type = "info", duration = 5000) {
+        const toastContainer = document.getElementById("toastContainer");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">✕</button>
+          </div>
+        `;
+
+        toastContainer.appendChild(toast);
+        setTimeout(() => toast.classList.add("show"), 100);
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 300);
+        }, duration);
+      }
+
+      function setLoading(element, isLoading) {
+        const btn = element.querySelector('button[type="submit"]');
+        const btnText = btn.querySelector('[id$="BtnText"]');
+        const btnSpinner = btn.querySelector('[id$="BtnSpinner"]');
+
+        if (isLoading) {
+          btn.disabled = true;
+          btnText.classList.add("hidden");
+          btnSpinner.classList.remove("hidden");
+          element.classList.add("loading");
+        } else {
+          btn.disabled = false;
+          btnText.classList.remove("hidden");
+          btnSpinner.classList.add("hidden");
+          element.classList.remove("loading");
+        }
+      }
+
+      function activateTab(activeId) {
+        tabLinks.forEach((tab) => {
+          if (tab.id === activeId) {
+            tab.classList.add("active-tab");
+            tab.classList.remove("inactive-tab");
+          } else {
+            tab.classList.remove("active-tab");
+            tab.classList.add("inactive-tab");
+          }
+        });
+      }
+
+      // Tab navigation
+      showRegisterTab?.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginSection.style.display = "none";
+        registerSection.style.display = "block";
+        activateTab("showRegisterTab");
+      });
+
+      showLoginTab?.addEventListener("click", (e) => {
+        e.preventDefault();
+        registerSection.style.display = "none";
+        loginSection.style.display = "block";
+        activateTab("showLoginTab");
+      });
+
+      showRegister?.addEventListener("click", (e) => {
+        e.preventDefault();
+        loginSection.style.display = "none";
+        registerSection.style.display = "block";
+        activateTab("showRegisterTab");
+      });
+
+      showLogin?.addEventListener("click", (e) => {
+        e.preventDefault();
+        registerSection.style.display = "none";
+        loginSection.style.display = "block";
+        activateTab("showLoginTab");
+      });
+
+      // Login handler
+      loginForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setLoading(loginForm, true);
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        console.log("Attempting login with:", email); // Debug log
+
+        try {
+          const response = await fetch("http://localhost:8000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          console.log("Response status:", response.status); // Debug log
+          const result = await response.json();
+          console.log("Login result:", result); // Debug log
+
+          if (result.success) {
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("userPassword", password);
+            showToast(
+              "🎉 Login successful! Redirecting to dashboard...",
+              "success",
+              2000
+            );
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1500);
+          } else {
+            showToast(
+              "❌ " + (result.message || "Invalid credentials"),
+              "error"
+            );
+          }
+        } catch (err) {
+          console.error("Login error:", err); // Debug log
+          showToast("🔗 Connection error: " + err.message, "error");
+        } finally {
+          setLoading(loginForm, false);
+        }
+      });
+
+      // Register handler
+      registerForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setLoading(registerForm, true);
+
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+
+        if (password.length < 6) {
+          showToast("⚠️ Password must be at least 6 characters long", "error");
+          setLoading(registerForm, false);
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:8000/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            showToast(
+              "🎉 Registration successful! Please sign in with your new account.",
+              "success"
+            );
+            registerSection.style.display = "none";
+            loginSection.style.display = "block";
+            activateTab("showLoginTab");
+            document.getElementById("email").value = email;
+          } else {
+            showToast(
+              "❌ " + (result.message || "Registration failed"),
+              "error"
+            );
+          }
+        } catch (err) {
+          showToast("🔗 Connection error: " + err.message, "error");
+        } finally {
+          setLoading(registerForm, false);
+        }
+      });
+
+      // Check backend connection
+      async function checkBackend() {
+        try {
+          const response = await fetch("http://localhost:8000/", {
+            method: "GET",
+          });
+          if (response.ok) {
+            showToast("✅ Backend connected successfully!", "success", 3000);
+          }
+        } catch (err) {
+          showToast(
+            "⚠️ Backend not running. Please start: uvicorn backend.main:app --reload",
+            "error",
+            8000
+          );
+        }
+      }
+
+      checkBackend();
+    </script>
+  </body>
+</html>

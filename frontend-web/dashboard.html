@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - AiThena</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900"
+    />
+    <link rel="stylesheet" href="css/navbar.css" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+      /* Import Inter font */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap");
+
+      /* Global Styles */
+      body {
+        font-family: "Inter", "Noto Sans", sans-serif !important;
+        background: #f8f9fc;
+        color: #0d121c;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-container {
+        padding: 0rem 2.5rem !important;
+        max-width: 960px !important;
+        margin: 0 auto !important;
+      }
+
+      /* UNIFIED NAVBAR STYLING - FIXED LOGO SIZE */
+      .aithena-navbar {
+        background: #ffffff;
+        border-bottom: 1px solid #e7ebf3;
+        padding: 0.75rem 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        min-height: 60px; /* Fixed height to prevent expansion */
+      }
+
+      .aithena-logo-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem; /* Reduced gap */
+        flex-shrink: 0; /* Prevent shrinking */
+        min-width: fit-content; /* Only take needed space */
+      }
+
+      .aithena-logo-img {
+        height: 32px; /* REDUCED from 40px to 32px */
+        width: 32px; /* Fixed width to prevent stretching */
+        object-fit: contain; /* Maintain aspect ratio */
+        transition: transform 0.2s ease;
+        flex-shrink: 0; /* Prevent shrinking */
+      }
+
+      .aithena-logo-img:hover {
+        transform: scale(1.05);
+      }
+
+      .aithena-brand-text {
+        font-size: 1.25rem; /* REDUCED from 1.5rem to 1.25rem */
+        font-weight: 700;
+        margin: 0;
+        color: #4a90e2;
+        letter-spacing: -0.015em;
+        white-space: nowrap; /* Prevent text wrapping */
+      }
+
+      .aithena-nav-right {
+        display: flex;
+        flex: 1; /* Take remaining space */
+        justify-content: space-between;
+        gap: 1.5rem; /* Reduced gap */
+        align-items: center;
+        margin-left: 1.5rem; /* Reduced margin */
+        min-width: 0; /* Allow shrinking if needed */
+      }
+
+      .aithena-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem; /* Reduced gap for tighter spacing */
+        flex-wrap: nowrap; /* Prevent wrapping */
+      }
+
+      .aithena-nav-link {
+        color: #0d121c !important;
+        text-decoration: none !important;
+        font-size: 0.875rem; /* Slightly smaller font */
+        font-weight: 550;
+        line-height: normal;
+        position: relative;
+        transition: all 0.2s ease;
+        padding: 0.5rem 0;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap; /* Prevent text wrapping */
+      }
+
+      .aithena-nav-link:hover {
+        color: #4a90e2 !important;
+        text-decoration: none !important;
+        border-bottom: 2px solid #4a90e2;
+      }
+
+      .aithena-user-section {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem; /* Reduced gap */
+        flex-shrink: 0; /* Prevent shrinking */
+      }
+
+      .aithena-user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #f8f9fc;
+        padding: 0.4rem 0.75rem; /* Reduced padding */
+        border-radius: 0.75rem;
+        border: 1px solid #e7ebf3;
+        font-size: 0.8125rem; /* Smaller font */
+        color: #4b679b;
+        font-weight: 500;
+        white-space: nowrap; /* Prevent text wrapping */
+      }
+
+      .aithena-btn {
+        background: #4a90e2 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 0.75rem !important;
+        padding: 0.5rem 0.875rem !important; /* Reduced padding */
+        font-weight: 600 !important;
+        font-size: 0.8125rem !important; /* Smaller font */
+        transition: all 0.2s ease !important;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap; /* Prevent text wrapping */
+      }
+
+      .aithena-btn:hover {
+        background: #357abd !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+      }
+
+      .aithena-btn.danger {
+        background: #ef4444 !important;
+      }
+
+      .aithena-btn.danger:hover {
+        background: #dc2626 !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+
+      /* Responsive navbar */
+      @media (max-width: 768px) {
+        .aithena-navbar {
+          padding: 0.75rem 1rem;
+          flex-wrap: wrap; /* Allow wrapping on mobile */
+          gap: 0.75rem;
+        }
+
+        .aithena-logo-section {
+          order: 1;
+          flex: 0 0 auto;
+        }
+
+        .aithena-nav-right {
+          order: 2;
+          width: 100%;
+          margin-left: 0;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .aithena-nav-links {
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .aithena-user-section {
+          order: 3;
+          gap: 0.5rem;
+        }
+
+        .main-container {
+          padding: 0rem 1rem !important;
+        }
+
+        .aithena-logo-img {
+          height: 28px; /* Even smaller on mobile */
+          width: 28px;
+        }
+
+        .aithena-brand-text {
+          font-size: 1.125rem; /* Smaller on mobile */
+        }
+      }
+
+      /* For very small screens */
+      @media (max-width: 480px) {
+        .aithena-navbar {
+          padding: 0.5rem 0.75rem;
+        }
+
+        .aithena-nav-links {
+          display: none; /* Hide nav links on very small screens */
+        }
+
+        .aithena-user-info span {
+          display: none; /* Hide email text on very small screens */
+        }
+
+        .aithena-btn {
+          padding: 0.5rem !important;
+          font-size: 0.75rem !important;
+        }
+      }
+
+      /* REST OF YOUR EXISTING STYLES... */
+      .welcome-section {
+        padding: 2rem 0;
+        margin-bottom: 1rem;
+        text-align: center;
+        background: linear-gradient(135deg, #f8f9fc 0%, #e7f3ff 100%);
+        border-radius: 1rem;
+        border: 1px solid #e7ebf3;
+      }
+
+      .welcome-title {
+        color: #0d121c;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+      }
+
+      .welcome-subtitle {
+        color: #6a7581;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.4;
+        margin: 0;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      /* Tab styling */
+      .tab-navigation {
+        border-bottom: 1px solid #cfd8e8;
+        background: transparent;
+        padding: 0 1rem;
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        overflow-x: auto;
+      }
+
+      .tab-btn {
+        padding: 1rem 0 0.8125rem 0 !important;
+        border-bottom: 3px solid transparent;
+        background: transparent !important;
+        color: #4b679b !important;
+        font-weight: 700 !important;
+        font-size: 0.875rem !important;
+        text-transform: none !important;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: max-content;
+      }
+
+      .tab-btn.active {
+        border-bottom: 3px solid #4a90e2 !important;
+        color: #0d121c !important;
+      }
+
+      .tab-btn:hover {
+        color: #4a90e2 !important;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .feature-title {
+        color: #0d121c;
+        font-size: 1.375rem;
+        font-weight: 700;
+        margin: 1.25rem 0 0.75rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .feature-description {
+        color: #0d121c;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        margin-bottom: 0.75rem;
+      }
+
+      .upload-container {
+        border: 2px dashed #cfd8e8 !important;
+        border-radius: 0.75rem !important;
+        padding: 3.5rem 1.5rem !important;
+        background: #ffffff !important;
+        text-align: center;
+        margin: 1rem 0;
+        transition: all 0.2s ease;
+      }
+
+      .upload-container:hover {
+        border-color: #4a90e2;
+        background: #f8f9fc;
+      }
+
+      .btn-primary {
+        background: #4a90e2 !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 0.75rem !important;
+        padding: 0.625rem 1rem !important;
+        font-weight: 700 !important;
+        font-size: 0.875rem !important;
+        transition: all 0.2s ease !important;
+        min-width: 84px;
+        cursor: pointer;
+      }
+
+      .btn-primary:hover {
+        background: #357abd !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+      }
+
+      .form-input {
+        border: 1px solid #dde0e3 !important;
+        border-radius: 0.75rem !important;
+        background: #ffffff !important;
+        color: #4b679b !important;
+        font-size: 1rem !important;
+        padding: 0.9375rem !important;
+        min-height: 3.5rem;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus {
+        border-color: #4a90e2 !important;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1) !important;
+      }
+
+      .streamlit-card {
+        background: #ffffff;
+        border: 1px solid #e6e9ef;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        margin: 1rem 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .result-container {
+        background: #f8f9fb;
+        border: 1px solid #e7eaed;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .flashcard {
+        background: #f8f9fb;
+        border: 1px solid #e7eaed;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        transition: transform 0.2s ease;
+      }
+
+      .flashcard:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .quiz-question {
+        background: #ffffff;
+        border: 1px solid #e7eaed;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+
+      .quiz-results {
+        background: #f0f9f4;
+        border: 1px solid #bbf7d0;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        text-align: center;
+      }
+
+      .quiz-progress {
+        background: #dbeafe;
+        border: 1px solid #93c5fd;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        text-align: center;
+        font-weight: 600;
+        color: #1e40af;
+      }
+
+      .content-source-info {
+        background: #e0f2fe;
+        border: 1px solid #0ea5e9;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        font-weight: 500;
+        color: #0c4a6e;
+      }
+
+      .dashboard-footer {
+        margin-top: 3rem;
+        padding: 2rem 0;
+        border-top: 1px solid #e7ebf3;
+        color: #6a7581;
+        font-size: 0.875rem;
+        text-align: center;
+        background: #ffffff;
+        border-radius: 1rem 1rem 0 0;
+      }
+
+      .spinner {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #4a90e2;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        margin: 0.5rem 0;
+        padding: 0.75rem;
+        border: 1px solid #e7eaed;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .radio-option:hover {
+        background: #f8f9fb;
+        border-color: #4a90e2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      style="
+        font-family: Inter, 'Noto Sans', sans-serif;
+        background: #f8f9fc;
+        min-height: 100vh;
+      "
+    >
+      <!-- FIXED NAVBAR - Proper Logo Sizing -->
+      <nav class="aithena-navbar">
+        <div class="aithena-logo-section">
+          <img
+            src="assets/logo.png"
+            alt="AiThena Logo"
+            class="aithena-logo-img"
+          />
+          <h2 class="aithena-brand-text">AiThena</h2>
+        </div>
+
+        <div class="aithena-nav-right">
+          <div class="aithena-nav-links">
+            <a href="index.html" class="aithena-nav-link">Home</a>
+            <a href="#about" class="aithena-nav-link">About</a>
+            <a href="#features" class="aithena-nav-link">Features</a>
+            <a href="#support" class="aithena-nav-link">Support</a>
+          </div>
+
+          <div class="aithena-user-section">
+            <div class="aithena-user-info">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                />
+              </svg>
+              <span id="userEmail"></span>
+            </div>
+            <button id="logoutBtn" class="aithena-btn danger">🚪 Logout</button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Container -->
+      <div class="main-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+          <h1 class="welcome-title">Welcome to Your AiThena Dashboard!</h1>
+          <p class="welcome-subtitle">
+            🚀 Your AI-powered learning journey starts here. Choose from the
+            features below to enhance your learning experience with IBM Granite
+            3.3 powered intelligence.
+          </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+          <a href="#" class="tab-btn active" data-tab="pdf"
+            >📄 PDF Processing</a
+          >
+          <a href="#" class="tab-btn" data-tab="youtube">🎥 YouTube Analysis</a>
+          <a href="#" class="tab-btn" data-tab="text">✍️ Text Summarization</a>
+          <a href="#" class="tab-btn" data-tab="flashcards">🎯 Flashcards</a>
+          <a href="#" class="tab-btn" data-tab="quiz">📝 Quiz</a>
+          <a href="#" class="tab-btn" data-tab="feedback">📊 Feedback</a>
+        </div>
+
+        <!-- PDF Processing Tab -->
+        <div id="pdfContent" class="tab-content active">
+          <div class="streamlit-card">
+            <h2 class="feature-title">📄 PDF Processing & Chapter Summaries</h2>
+            <p class="feature-description">
+              Upload your textbooks and get AI-generated chapter summaries using
+              IBM Granite 3.3
+            </p>
+
+            <div class="upload-container">
+              <input
+                type="file"
+                id="pdfFileInput"
+                accept=".pdf"
+                style="display: none"
+              />
+              <button id="uploadPdfBtn" class="btn-primary">
+                📤 Choose PDF File
+              </button>
+              <p style="color: #4b679b; font-size: 0.875rem; margin-top: 1rem">
+                Drag and drop file here • Limit 200MB per file • PDF
+              </p>
+            </div>
+
+            <div id="pdfResults" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- YouTube Analysis Tab -->
+        <div id="youtubeContent" class="tab-content">
+          <div class="streamlit-card">
+            <h2 class="feature-title">🎥 YouTube Video Analysis</h2>
+            <p class="feature-description">
+              Extract transcripts and generate study notes from educational
+              YouTube videos
+            </p>
+
+            <div style="margin: 1rem 0">
+              <input
+                id="youtubeUrl"
+                placeholder="https://www.youtube.com/watch?v=..."
+                class="form-input"
+                style="margin-bottom: 1rem"
+              />
+              <button id="processYoutubeBtn" class="btn-primary">
+                🎬 Analyze Video
+              </button>
+            </div>
+
+            <div id="youtubeResults" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- Text Summarization Tab -->
+        <div id="textContent" class="tab-content">
+          <div class="streamlit-card">
+            <h2 class="feature-title">✍️ AI Text Summarization</h2>
+            <p class="feature-description">
+              Get concise summaries of any text content using IBM Granite 3.3
+            </p>
+
+            <textarea
+              id="textToSummarize"
+              placeholder="Paste your text here..."
+              class="form-input"
+              style="height: 200px; resize: vertical; margin-bottom: 1rem"
+            ></textarea>
+            <button id="summarizeBtn" class="btn-primary">
+              ✨ Generate Summary
+            </button>
+
+            <div id="textResults" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- Flashcards Tab -->
+        <div id="flashcardsContent" class="tab-content">
+          <div class="streamlit-card">
+            <h2 class="feature-title">🎯 AI-Generated Flashcards</h2>
+            <p class="feature-description">
+              Create interactive flashcards from your content for effective
+              learning
+            </p>
+
+            <select
+              id="flashcardSource"
+              class="form-input"
+              style="margin-bottom: 1rem"
+            >
+              <option value="custom">Custom Text</option>
+              <option value="pdf">PDF Summaries</option>
+              <option value="youtube">YouTube Content</option>
+            </select>
+
+            <textarea
+              id="flashcardText"
+              placeholder="Enter text for flashcards..."
+              class="form-input"
+              style="height: 150px; resize: vertical; margin-bottom: 1rem"
+            ></textarea>
+            <button id="generateFlashcardsBtn" class="btn-primary">
+              🎯 Generate Flashcards
+            </button>
+
+            <div id="flashcardsResults" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- Quiz Tab -->
+        <div id="quizContent" class="tab-content">
+          <div class="streamlit-card">
+            <h2 class="feature-title">📝 Interactive Quiz Challenge</h2>
+            <p class="feature-description">
+              Test your knowledge with AI-generated multiple-choice questions
+            </p>
+
+            <select
+              id="quizSource"
+              class="form-input"
+              style="margin-bottom: 1rem"
+            >
+              <option value="custom">Custom Text</option>
+              <option value="pdf">PDF Summaries</option>
+              <option value="youtube">YouTube Content</option>
+            </select>
+
+            <textarea
+              id="quizText"
+              placeholder="Enter text for quiz..."
+              class="form-input"
+              style="height: 150px; resize: vertical; margin-bottom: 1rem"
+            ></textarea>
+            <button id="generateQuizBtn" class="btn-primary">
+              🚀 Generate New Quiz
+            </button>
+
+            <div id="quizResults" style="display: none"></div>
+          </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedbackContent" class="tab-content">
+          <div class="streamlit-card">
+            <h2 class="feature-title">📊 Personalized Learning Feedback</h2>
+            <p class="feature-description">
+              Get AI-powered feedback and study recommendations based on your
+              performance
+            </p>
+
+            <div id="feedbackResults">
+              <div class="content-source-info">
+                <p style="text-align: center; margin: 0">
+                  📝 Complete a quiz first to unlock personalized AI feedback!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="dashboard-footer">
+          <p>
+            <strong
+              >🤖 Powered by IBM Granite 3.3 & Watsonx.ai | AiThena Learning
+              Platform</strong
+            >
+          </p>
+          <p style="margin-top: 0.5rem">
+            💡 Tip: Use flashcards for memorization, take quizzes for
+            assessment, and get AI feedback for improvement!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>
