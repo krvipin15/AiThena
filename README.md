@@ -19,21 +19,24 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 ```bash
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 ```
 
 ### 4. Set Up Environment Variables
 
-Create a `.env` file in the project root with your credentials:
+Copy the example environment file and add your credentials:
+
+```bash
+cp env.example .env
+```
+
+Then edit the `.env` file with your credentials:
 
 ```bash
 # Granite API Configuration
 GRANITE_API_KEY=your_ibm_api_key_here
 GRANITE_API_URL=https://us-south.ml.cloud.ibm.com
 PROJECT_ID=your_project_id_here
-
-# Firebase Configuration
-FIREBASE_KEY_PATH=/Users/ymk/Desktop/AiThena/backend/firebase_service_account.json
 ```
 
 #### How to Get IBM Watsonx.ai Credentials:
@@ -50,10 +53,7 @@ FIREBASE_KEY_PATH=/Users/ymk/Desktop/AiThena/backend/firebase_service_account.js
    - Copy the Project ID
 6. **Add to .env file** as shown above
 
-### 5. Add Firebase Service Account
-- Place your `firebase_service_account.json` in the `backend/` directory, or set the `FIREBASE_KEY_PATH` environment variable.
-
-### 6. Run the Backend Server
+### 5. Run the Backend Server
 ```bash
 uvicorn backend.main:app --reload
 ```
@@ -65,14 +65,19 @@ The server will start at: **http://127.0.0.1:8000**
 ## API Endpoints
 
 ### Authentication
-- All endpoints require a Firebase Auth token (pass as `token` in form data).
-- For testing, you can use `token=test` (authentication is temporarily disabled for development).
+- All endpoints require email and password authentication using bcrypt.
+- User data is stored in SQLite3 database.
+
+### Authentication Endpoints
+- `POST /register` — Register a new user with email and password.
+- `POST /login` — Authenticate user and get user ID.
 
 ### PDF Processing
 - `POST /upload_pdf` — Upload a PDF, returns chapter summaries.
 
 ### YouTube Processing
 - `POST /process_youtube` — Submit a YouTube link, returns transcript and summary.
+- `POST /youtube_transcript` — Get YouTube transcript with timestamps.
 
 ### Summarization
 - `POST /summarize` — Summarize arbitrary text.
@@ -85,7 +90,7 @@ The server will start at: **http://127.0.0.1:8000**
 - `POST /feedback` — Analyze quiz results and get personalized feedback.
 
 ### Store Results
-- `POST /store_result` — Store quiz/user results in Firestore.
+- `POST /store_result` — Store quiz/user results in SQLite database.
 
 ---
 
@@ -93,7 +98,6 @@ The server will start at: **http://127.0.0.1:8000**
 - `GRANITE_API_KEY` — Your IBM watsonx.ai API key
 - `GRANITE_API_URL` — IBM watsonx.ai endpoint (default: `https://us-south.ml.cloud.ibm.com`)
 - `PROJECT_ID` — Your IBM watsonx.ai project ID
-- `FIREBASE_KEY_PATH` — Path to Firebase service account key (default: `backend/firebase_service_account.json`)
 
 **Security Note:** For production, always set these environment variables instead of using the default values in the code.
 
@@ -108,11 +112,11 @@ The server will start at: **http://127.0.0.1:8000**
 - **MCQ Generation** - Produce well-structured multiple choice questions
 - **Adaptive Feedback** - Analyze quiz results and provide personalized feedback with study suggestions
 - **PDF Processing** - Upload and process PDFs with Docling
-- **YouTube Integration** - Process YouTube links (transcription placeholder)
-- **Firebase Integration** - Authentication and data storage ready
+- **YouTube Integration** - Get transcripts and generate summaries from YouTube videos
+- **Bcrypt Authentication** - Secure password hashing and SQLite3 user storage
+- **User Management** - Register, login, and store user data securely
 
 ### 🔄 In Development
-- **YouTube Transcription** - Real speech-to-text integration
 - **Frontend UI** - User interface for all features
 - **TTS Integration** - Audio summaries
 - **Progress Dashboard** - User performance tracking
@@ -122,8 +126,32 @@ The server will start at: **http://127.0.0.1:8000**
 ## Notes
 - PDF parsing uses Docling (with PyPDF2 fallback).
 - Granite API integration uses IAM token exchange for secure authentication.
-- All user data and feedback are stored in Firebase Firestore.
+- All user data and feedback are stored in SQLite3 database.
+- YouTube transcripts are automatically saved to `data/youtube_transcript/` directory.
 - The backend includes comprehensive error handling and fallbacks.
+
+---
+
+## Testing
+
+For comprehensive API testing examples and expected responses, see [test_response.md](test_response.md).
+
+---
+
+## Security
+
+### ⚠️ Important Security Notes:
+
+1. **Never commit your `.env` file** - It contains sensitive API keys
+2. **Use the `env.example` template** - Copy it to `.env` and fill in your credentials
+3. **Keep your API keys private** - Don't share them in code, logs, or public repositories
+4. **Rotate keys regularly** - Update your IBM watsonx.ai API keys periodically
+5. **Use environment variables** - Never hardcode credentials in your source code
+
+### Environment Variables:
+- `GRANITE_API_KEY` — Your IBM watsonx.ai API key (REQUIRED)
+- `GRANITE_API_URL` — IBM watsonx.ai endpoint (default: `https://us-south.ml.cloud.ibm.com`)
+- `PROJECT_ID` — Your IBM watsonx.ai project ID (REQUIRED)
 
 ---
 
@@ -134,14 +162,15 @@ The server will start at: **http://127.0.0.1:8000**
 1. **401 Unauthorized Error:**
    - Check your `GRANITE_API_KEY` and `PROJECT_ID` in `.env`
    - Ensure your IBM watsonx.ai project is active
+   - Verify your email and password for authentication
 
 2. **Module Not Found Errors:**
    - Make sure you're in the virtual environment: `source venv/bin/activate`
-   - Install dependencies: `pip install -r backend/requirements.txt`
+   - Install dependencies: `pip install -r requirements.txt`
 
-3. **Firebase Errors:**
-   - Ensure `firebase_service_account.json` is in the `backend/` directory
-   - Check the file path in `FIREBASE_KEY_PATH`
+3. **YouTube Transcript Errors:**
+   - Ensure the YouTube video has available captions/transcripts
+   - Check if the video is public and accessible
 
 4. **Empty API Responses:**
    - Check backend logs for detailed error messages

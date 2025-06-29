@@ -1,29 +1,30 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 class ChapterSummary(BaseModel):
     title: str
     summary: str
 
 class SummaryResponse(BaseModel):
-    summaries: List[ChapterSummary]
+    summaries: List[Dict[str, str]]
 
 class YouTubeResponse(BaseModel):
     transcript: str
     summary: str
+    video_info: Dict[str, Any]
 
 class SummarizeResponse(BaseModel):
     summary: str
 
 class StoreResultResponse(BaseModel):
-    status: str 
+    status: str
 
 class Flashcard(BaseModel):
     question: str
     answer: str
 
 class FlashcardResponse(BaseModel):
-    flashcards: list[Flashcard]
+    flashcards: List[Dict[str, str]]
 
 class MCQ(BaseModel):
     question: str
@@ -31,7 +32,23 @@ class MCQ(BaseModel):
     answer: str
 
 class MCQResponse(BaseModel):
-    mcqs: list[MCQ]
+    mcqs: List[Dict[str, Any]]
 
 class FeedbackResponse(BaseModel):
-    feedback: str 
+    feedback: str
+
+class AuthRequest(BaseModel):
+    email: str
+    password: str
+
+class AuthResponse(BaseModel):
+    success: bool
+    message: str
+    user_id: Optional[str] = None
+
+class YouTubeTranscriptResponse(BaseModel):
+    success: bool
+    transcript: str = None
+    summary: str = None
+    video_info: Dict[str, Any] = None
+    error: str = None 
