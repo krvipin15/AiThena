@@ -1,11 +1,12 @@
 fastapi
 uvicorn
-firebase-admin
+bcrypt
 PyPDF2
 yt-dlp
 requests
-google-cloud-firestore
 python-multipart
 flask-cors
 docling
-ibm-watsonx-ai 
+pathlib
+ibm-watsonx-ai
+youtube-transcript-api

@@ -6,9 +6,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Granite API Configuration - Use environment variables for security
-GRANITE_API_KEY = os.getenv("GRANITE_API_KEY", "YB2z8w696L6gUJl_Wow2KlecqayVSesfpaG5mWqOcOgy")
+GRANITE_API_KEY = os.getenv("GRANITE_API_KEY")
 GRANITE_API_URL = os.getenv("GRANITE_API_URL", "https://us-south.ml.cloud.ibm.com")
-PROJECT_ID = os.getenv("PROJECT_ID", "3dc70b5a-2757-43d7-b7f4-1d8ce6ec27d9")  # You'll need to add this to .env
+PROJECT_ID = os.getenv("PROJECT_ID")
+
+# Validate required environment variables
+if not GRANITE_API_KEY:
+    raise ValueError("GRANITE_API_KEY environment variable is required. Please set it in your .env file.")
+
+if not PROJECT_ID:
+    raise ValueError("PROJECT_ID environment variable is required. Please set it in your .env file.")
 
 # Function to get IAM access token from API key
 def get_iam_token(api_key):
@@ -48,14 +55,11 @@ def call_granite_api(prompt: str, model: str = "ibm/granite-3-3-8b-instruct", ma
         
         api_endpoint = f"{GRANITE_API_URL}/ml/v1-beta/generation/text?version=2024-05-29"
         
-        print(f"Calling Granite API with URL: {api_endpoint}")
+        print(f"Calling Granite API...")
         print(f"Model: {model}")
-        print(f"Project ID: {PROJECT_ID}")
-        print(f"Prompt: {prompt[:200]}...")
         
         response = requests.post(api_endpoint, headers=headers, json=payload)
         print(f"Response status: {response.status_code}")
-        print(f"Response text: {response.text[:500]}...")
         
         response.raise_for_status()
         result = response.json()
@@ -63,10 +67,9 @@ def call_granite_api(prompt: str, model: str = "ibm/granite-3-3-8b-instruct", ma
         # Extract the generated text from the response
         if "results" in result and result["results"]:
             generated_text = result["results"][0].get("generated_text", "").strip()
-            print(f"Generated text: '{generated_text}'")
             return generated_text
         else:
-            print(f"No results in response: {result}")
+            print(f"No results in response")
             return str(result)
             
     except Exception as e:
