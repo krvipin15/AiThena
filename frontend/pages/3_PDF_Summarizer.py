@@ -1,13 +1,15 @@
 import streamlit as st
 import requests
 import json
+import os
 
 # --- Page Config ---
 st.set_page_config(page_title="PDF Summarizer - AiThena", page_icon="📄")
 
 # --- Auth Check ---
-if "user_email" not in st.session_state:
-    st.warning("⚠️ Please sign in to access the PDF Summarizer.")
+if "user_email" not in st.session_state or not st.session_state.get("logged_in", False):
+    st.warning("⚠️ Please sign in to access this page.")
+    st.page_link("pages/1_Sign_in.py", label="Go to Sign In", icon="🔐")
     st.stop()
 
 # --- Page Title ---
@@ -23,14 +25,15 @@ if uploaded_file is not None:
         with st.spinner("🔄 Processing PDF..."):
             try:
                 # Call backend API for PDF processing
-                backend_url = "http://localhost:8000/upload_pdf"
+                backend_url = os.getenv("BACKEND_URL", "http://localhost:8000")
+                api_endpoint = f"{backend_url}/upload_pdf"
                 files = {"file": uploaded_file}
                 data = {
                     "email": st.session_state["user_email"],
                     "password": st.session_state.get("password", "")
                 }
                 
-                response = requests.post(backend_url, files=files, data=data)
+                response = requests.post(api_endpoint, files=files, data=data, timeout=30)
                 
                 if response.status_code == 200:
                     result = response.json()
@@ -66,14 +69,24 @@ if uploaded_file is not None:
                         st.warning("⚠️ No summaries were generated. Please check your PDF content.")
                 else:
                     st.error(f"❌ Backend error: {response.status_code}")
+                    try:
+                        error_detail = response.json()
+                        st.error(f"Details: {error_detail}")
+                    except:
+                        st.error(f"Response: {response.text}")
                     
             except requests.exceptions.ConnectionError:
-                st.error("❌ Cannot connect to backend server. Please make sure the backend is running on http://localhost:8000")
+                st.error("❌ Cannot connect to backend server. Please ensure:")
+                st.error("• Backend is running on http://localhost:8000")
+                st.error("• No firewall blocking the connection")
+                st.error("• Backend service is properly configured")
+            except requests.exceptions.Timeout:
+                st.error("❌ Request timed out. The server might be overloaded.")
             except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+                st.error(f"❌ Unexpected error: {str(e)}")
 else:
     st.info("📁 Please upload a PDF file to begin processing.")
 
 # --- Footer ---
 st.markdown("---")
-st.markdown("🔙 [Back to Dashboard](pages/2_Dashboard)")
+st.page_link("pages/2_Dashboard.py", label="🔙 Back to Dashboard", icon="📊")

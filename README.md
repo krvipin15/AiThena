@@ -3,6 +3,137 @@ Personalized AI tutor, built with IBM Granite 3.3 &amp; Watsonx.ai. This adaptiv
 
 ---
 
+## Quick Start
+
+### 1. Clone the Repository
+```bash
+git clone <repo-url>
+cd AiThena
+```
+
+### 2. Create and Activate Virtual Environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set Up Environment Variables
+
+Copy the example environment file and add your credentials:
+
+```bash
+cp env.example .env
+```
+
+Then edit the `.env` file with your credentials:
+
+```bash
+# Granite API Configuration
+GRANITE_API_KEY=your_ibm_api_key_here
+GRANITE_API_URL=https://us-south.ml.cloud.ibm.com
+PROJECT_ID=your_project_id_here
+```
+
+#### How to Get IBM Watsonx.ai Credentials:
+
+1. **Go to [IBM Watsonx.ai](https://www.ibm.com/products/watsonx)**
+2. **Sign up/Login** to your IBM Cloud account
+3. **Create a Project** in the watsonx.ai dashboard
+4. **Get API Key:**
+   - Go to Project Settings → API Keys
+   - Click "Create" or "View" to generate an API key
+   - Copy the API key
+5. **Get Project ID:**
+   - In your project dashboard, find the Project ID
+   - Copy the Project ID
+6. **Add to .env file** as shown above
+
+### 5. Run the Application
+
+#### Start Backend (Terminal 1):
+```bash
+uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+#### Start Frontend (Terminal 2):
+```bash
+cd frontend
+streamlit run app.py
+```
+
+### 6. Access the Application
+
+- **Frontend**: http://localhost:8501
+- **Backend API**: http://127.0.0.1:8000
+- **API Documentation**: http://127.0.0.1:8000/docs
+
+---
+
+## Frontend Structure
+
+The frontend uses Streamlit with a clean, organized app structure:
+
+```
+frontend/
+├── app.py              # Main entry point + Home page content
+├── pages/              # All page files
+│   ├── 1_Sign_in.py    # Authentication
+│   ├── 2_Dashboard.py  # Main dashboard
+│   ├── 3_PDF_Summarizer.py
+│   ├── 4_YouTube_Summarizer.py
+│   ├── 5_Flashcards_Generator.py
+│   ├── 6_Quiz_Generator.py
+│   └── 7_Progress_Tracker.py
+└── assets/
+    └── logo.png        # Application logo
+```
+
+**Key Features:**
+- ✅ **Single Entry Point**: `app.py` serves as both main entry and home page
+- ✅ **Clean Navigation**: All page paths use `pages/` prefix correctly
+- ✅ **User Authentication**: Secure login/registration with session management
+- ✅ **Backend Integration**: All pages connect to FastAPI backend endpoints
+- ✅ **Modern UI**: Responsive design with beautiful styling
+- ✅ **Automatic Redirects**: Smart navigation based on login status
+- ✅ **Logout Functionality**: Proper session cleanup and redirection
+
+---
+
+## Application Architecture
+
+AiThena follows a modern client-server architecture:
+
+### Frontend (Streamlit)
+- **Entry Point**: `frontend/app.py` - Main application with home page
+- **Pages**: Modular Streamlit pages for different features
+- **Session Management**: Secure user sessions with automatic redirects
+- **UI/UX**: Modern, responsive interface with intuitive navigation
+
+### Backend (FastAPI)
+- **API Server**: RESTful API endpoints for all AI functionality
+- **Authentication**: Bcrypt-based user authentication with SQLite3 storage
+- **AI Integration**: IBM Watsonx.ai Granite 3.3 model integration
+- **Data Processing**: YouTube transcripts, PDF parsing, and content analysis
+
+### Data Flow
+1. **User Authentication**: Frontend → Backend → SQLite3 database
+2. **Content Processing**: Frontend → Backend → IBM Granite API → Response
+3. **Session Management**: Streamlit session state with backend validation
+4. **Data Storage**: User data, transcripts, and results stored in SQLite3
+
+### Security Features
+- **Environment Variables**: Secure API key management
+- **Password Hashing**: Bcrypt for secure password storage
+- **Session Validation**: Backend verification of user sessions
+- **Input Sanitization**: Proper validation of all user inputs
+
+---
+
 ## Backend Setup & Usage
 
 ### 1. Clone the Repository
@@ -115,11 +246,15 @@ The server will start at: **http://127.0.0.1:8000**
 - **YouTube Integration** - Get transcripts and generate summaries from YouTube videos
 - **Bcrypt Authentication** - Secure password hashing and SQLite3 user storage
 - **User Management** - Register, login, and store user data securely
+- **Frontend UI** - Complete Streamlit interface with modern design and navigation
+- **Session Management** - Secure user sessions with automatic redirects
+- **Progress Tracking** - Track learning progress and quiz results
 
-### 🔄 In Development
-- **Frontend UI** - User interface for all features
-- **TTS Integration** - Audio summaries
-- **Progress Dashboard** - User performance tracking
+### 🔄 Future Enhancements
+- **TTS Integration** - Audio summaries and voice feedback
+- **Advanced Analytics** - Detailed learning analytics and insights
+- **Mobile Optimization** - Enhanced mobile experience
+- **Offline Mode** - Basic functionality without internet connection
 
 ---
 

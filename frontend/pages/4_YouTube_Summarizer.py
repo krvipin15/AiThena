@@ -70,4 +70,4 @@ else:
 
 # --- Footer ---
 st.markdown("---")
-st.markdown("🔙 [Back to Dashboard](pages/2_Dashboard)")
+st.page_link("pages/2_Dashboard.py", label="🔙 Back to Dashboard", icon="📊")

@@ -27,4 +27,4 @@ st.info("🔧 Placeholder: Progress charts will be displayed here once data is a
 
 # --- Footer ---
 st.markdown("---")
-st.markdown("🔙 [Back to Dashboard](2_Dashboard.py)")
+st.page_link("pages/2_Dashboard.py", label="🔙 Back to Dashboard", icon="📊")

@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .auth import register_user, authenticate_user, get_user_id, store_user_result, store_user_feedback
 from .processors import extract_text_and_chapters
-from .granite import summarize_text, generate_flashcards_from_text, generate_mcq_from_text, generate_feedback
+from .granite import summarize_text, generate_flashcards_from_text, generate_mcq_from_text, generate_feedback, generate_youtube_summary
 from .youtube_processor import youtube_processor
 from .schemas import (
     SummaryResponse, YouTubeTranscriptResponse, SummarizeResponse, 
@@ -68,8 +68,38 @@ async def process_youtube(youtube_url: str = Form(...), email: str = Form(...), 
     if not transcript_success:
         return YouTubeTranscriptResponse(success=False, error=transcript)
     
-    # Generate summary
-    summary = summarize_text(transcript)
+    # Generate summary using the dedicated YouTube summary function
+    video_title = video_info.get("title", "") if video_info else ""
+    summary = generate_youtube_summary(transcript, video_title)
+    
+    return YouTubeTranscriptResponse(
+        success=True,
+        transcript=transcript,
+        summary=summary,
+        video_info=video_info
+    )
+
+@app.post("/youtube_summary", response_model=YouTubeTranscriptResponse)
+async def youtube_summary(youtube_url: str = Form(...), email: str = Form(...), password: str = Form(...)):
+    """Generate a comprehensive YouTube summary with enhanced prompt"""
+    # Authenticate user
+    success, message = authenticate_user(email, password)
+    if not success:
+        raise HTTPException(status_code=401, detail=message)
+    
+    # Get video info
+    info_success, video_info = youtube_processor.get_video_info(youtube_url)
+    if not info_success:
+        return YouTubeTranscriptResponse(success=False, error=video_info.get("error", "Failed to get video info"))
+    
+    # Get transcript
+    transcript_success, transcript = youtube_processor.get_transcript(youtube_url)
+    if not transcript_success:
+        return YouTubeTranscriptResponse(success=False, error=transcript)
+    
+    # Generate enhanced summary
+    video_title = video_info.get("title", "") if video_info else ""
+    summary = generate_youtube_summary(transcript, video_title)
     
     return YouTubeTranscriptResponse(
         success=True,

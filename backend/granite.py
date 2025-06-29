@@ -76,11 +76,66 @@ def call_granite_api(prompt: str, model: str = "ibm/granite-3-3-8b-instruct", ma
         print(f"Error calling Granite API: {e}")
         return f"[Error: {str(e)}]"
 
+def generate_youtube_summary(transcript: str, video_title: str = "") -> str:
+    """Generate a comprehensive summary specifically for YouTube videos"""
+    prompt = f"""Create a detailed and engaging summary of this YouTube video:
+
+Video Title: {video_title if video_title else "Computer Basics Course"}
+
+Transcript:
+{transcript[:4000]}
+
+Please create a comprehensive summary that includes:
+
+**Main Topic & Overview**
+- What is this video about?
+- Who is the target audience?
+
+**Key Points Covered**
+- List the main concepts and topics discussed
+- Include specific examples or demonstrations mentioned
+
+**Important Takeaways**
+- What should viewers remember from this video?
+- What practical knowledge or skills are gained?
+
+**Structure & Flow**
+- How is the content organized?
+- What are the main sections or chapters?
+
+**Additional Notes**
+- Any special features, demonstrations, or interactive elements
+- Technical requirements or prerequisites mentioned
+
+Format the summary with clear headings, bullet points for key information, and a professional but accessible tone."""
+
+    return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=800)
+
 def summarize_text(text: str) -> str:
     """Summarize text using Granite 3.3"""
-    prompt = f"Provide a brief, concise summary of this text in 1-2 sentences: {text[:1500]}"
+    # Check if this looks like a YouTube transcript (has timestamps or is longer)
+    is_youtube = len(text) > 2000 or '[' in text[:100]
     
-    return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=100)
+    if is_youtube:
+        # Better prompt for YouTube videos
+        prompt = f"""Create a comprehensive summary of this YouTube video transcript:
+
+{text[:3000]}
+
+Please provide a detailed summary that includes:
+1. Main topic and key themes
+2. Important points and concepts discussed
+3. Key takeaways for viewers
+4. Overall structure and flow of the content
+
+Format the summary in clear paragraphs with bullet points for key points."""
+
+        return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=500)
+    else:
+        # Standard prompt for other text
+        prompt = f"Provide a clear and comprehensive summary of this text in 2-3 paragraphs: {text[:2000]}"
+        
+        return call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=300)
 
 def generate_flashcards_from_text(text: str):
     """Generate flashcards from text using Granite"""
@@ -128,9 +183,24 @@ def generate_flashcards_from_text(text: str):
 
 def generate_mcq_from_text(text: str):
     """Generate multiple choice questions from text using Granite"""
-    prompt = f"Create 2 multiple choice questions from this text: {text[:1000]}. Format each as: Q: [question] A) [option] B) [option] C) [option] D) [option] Answer: [A/B/C/D]"
-    
-    response = call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=400)
+    prompt = f"""Create 5 high-quality multiple choice questions from this text: {text[:1500]}
+
+Format each question exactly as follows:
+Q: [Clear, specific question]
+A) [First option]
+B) [Second option] 
+C) [Third option]
+D) [Fourth option]
+Answer: [A/B/C/D]
+
+Guidelines:
+- Make questions challenging but fair
+- Ensure all options are plausible
+- Only one correct answer per question
+- Questions should test understanding, not just memorization
+- Use clear, unambiguous language"""
+
+    response = call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=600)
     
     try:
         # Try to parse the response and convert to MCQ format
@@ -141,7 +211,7 @@ def generate_mcq_from_text(text: str):
         for line in lines:
             line = line.strip()
             if line.startswith('Q:'):
-                if current_mcq:
+                if current_mcq and current_mcq.get("question") and current_mcq.get("choices"):
                     mcqs.append(current_mcq)
                 current_mcq = {"question": line.replace('Q:', '').strip(), "choices": [], "answer": ""}
             elif line.startswith('A)') or line.startswith('B)') or line.startswith('C)') or line.startswith('D)'):
@@ -151,7 +221,7 @@ def generate_mcq_from_text(text: str):
                 if current_mcq:
                     current_mcq["answer"] = line.replace('Answer:', '').strip()
         
-        if current_mcq:
+        if current_mcq and current_mcq.get("question") and current_mcq.get("choices"):
             mcqs.append(current_mcq)
         
         if mcqs:
@@ -163,15 +233,26 @@ def generate_mcq_from_text(text: str):
                     "question": "What is the main topic of this text?",
                     "choices": ["A. Topic A", "B. Topic B", "C. Topic C", "D. Topic D"],
                     "answer": "A"
+                },
+                {
+                    "question": "Which of the following is mentioned in the text?",
+                    "choices": ["A. Option A", "B. Option B", "C. Option C", "D. Option D"],
+                    "answer": "B"
                 }
             ]
-    except:
+    except Exception as e:
+        print(f"Error parsing MCQs: {e}")
         # Fallback to simple format if parsing fails
         return [
             {
                 "question": "What is the main topic of this text?",
                 "choices": ["A. Topic A", "B. Topic B", "C. Topic C", "D. Topic D"],
                 "answer": "A"
+            },
+            {
+                "question": "Which of the following is mentioned in the text?",
+                "choices": ["A. Option A", "B. Option B", "C. Option C", "D. Option D"],
+                "answer": "B"
             }
         ]
 
