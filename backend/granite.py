@@ -183,24 +183,35 @@ def generate_flashcards_from_text(text: str):
 
 def generate_mcq_from_text(text: str):
     """Generate multiple choice questions from text using Granite"""
-    prompt = f"""Create 5 high-quality multiple choice questions from this text: {text[:1500]}
+    prompt = f"""Create 5 high-quality multiple choice questions from this text: {text[:2000]}
 
-Format each question exactly as follows:
-Q: [Clear, specific question]
-A) [First option]
-B) [Second option] 
-C) [Third option]
-D) [Fourth option]
-Answer: [A/B/C/D]
+IMPORTANT: Follow this EXACT format for each question:
 
-Guidelines:
-- Make questions challenging but fair
-- Ensure all options are plausible
-- Only one correct answer per question
-- Questions should test understanding, not just memorization
-- Use clear, unambiguous language"""
+Q: [Write a clear, specific question about the text content]
+A) [Write the first answer option]
+B) [Write the second answer option]
+C) [Write the third answer option]
+D) [Write the fourth answer option]
+Answer: [Write only A, B, C, or D]
 
-    response = call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=600)
+Requirements:
+- Questions must be directly related to the provided text
+- All answer options must be plausible and related to the question
+- Only ONE option should be correct
+- The correct answer must be clearly indicated with A, B, C, or D
+- Questions should test comprehension and understanding
+- Avoid vague or ambiguous questions
+- Make sure the answer letter matches one of the options
+
+Example format:
+Q: What is the main purpose of a computer?
+A) To play games only
+B) To manipulate information and data
+C) To connect to the internet only
+D) To store files only
+Answer: B"""
+
+    response = call_granite_api(prompt, "ibm/granite-3-3-8b-instruct", max_tokens=800)
     
     try:
         # Try to parse the response and convert to MCQ format
@@ -211,7 +222,8 @@ Guidelines:
         for line in lines:
             line = line.strip()
             if line.startswith('Q:'):
-                if current_mcq and current_mcq.get("question") and current_mcq.get("choices"):
+                # If we have a previous complete MCQ, add it
+                if current_mcq and current_mcq.get("question") and len(current_mcq.get("choices", [])) >= 4 and current_mcq.get("answer"):
                     mcqs.append(current_mcq)
                 current_mcq = {"question": line.replace('Q:', '').strip(), "choices": [], "answer": ""}
             elif line.startswith('A)') or line.startswith('B)') or line.startswith('C)') or line.startswith('D)'):
@@ -219,39 +231,58 @@ Guidelines:
                     current_mcq["choices"].append(line)
             elif line.startswith('Answer:'):
                 if current_mcq:
-                    current_mcq["answer"] = line.replace('Answer:', '').strip()
+                    answer = line.replace('Answer:', '').strip()
+                    # Clean up the answer to just get A, B, C, or D
+                    if answer in ['A', 'B', 'C', 'D']:
+                        current_mcq["answer"] = answer
+                    else:
+                        # Try to extract the letter from the answer
+                        for char in answer:
+                            if char in ['A', 'B', 'C', 'D']:
+                                current_mcq["answer"] = char
+                                break
         
-        if current_mcq and current_mcq.get("question") and current_mcq.get("choices"):
+        # Add the last MCQ if it's complete
+        if current_mcq and current_mcq.get("question") and len(current_mcq.get("choices", [])) >= 4 and current_mcq.get("answer"):
             mcqs.append(current_mcq)
         
-        if mcqs:
-            return mcqs
+        # Validate and clean up MCQs
+        valid_mcqs = []
+        for mcq in mcqs:
+            if (mcq.get("question") and 
+                len(mcq.get("choices", [])) >= 4 and 
+                mcq.get("answer") in ['A', 'B', 'C', 'D']):
+                valid_mcqs.append(mcq)
+        
+        if valid_mcqs:
+            return valid_mcqs
         else:
             # Fallback to simple format
             return [
                 {
-                    "question": "What is the main topic of this text?",
-                    "choices": ["A. Topic A", "B. Topic B", "C. Topic C", "D. Topic D"],
+                    "question": "What is the main topic discussed in the text?",
+                    "choices": ["A. General information", "B. Technical details", "C. Historical context", "D. Future predictions"],
                     "answer": "A"
                 },
                 {
-                    "question": "Which of the following is mentioned in the text?",
-                    "choices": ["A. Option A", "B. Option B", "C. Option C", "D. Option D"],
+                    "question": "Which of the following concepts is mentioned in the text?",
+                    "choices": ["A. Advanced mathematics", "B. Basic principles", "C. Complex theories", "D. Scientific formulas"],
                     "answer": "B"
                 }
             ]
     except Exception as e:
         print(f"Error parsing MCQs: {e}")
+        print(f"Raw response: {response}")
         # Fallback to simple format if parsing fails
         return [
             {
-                "question": "What is the main topic of this text?",
-                "choices": ["A. Topic A", "B. Topic B", "C. Topic C", "D. Topic D"],
+                "question": "What is the main topic discussed in the text?",
+                "choices": ["A. General information", "B. Technical details", "C. Historical context", "D. Future predictions"],
                 "answer": "A"
             },
             {
-                "question": "Which of the following is mentioned in the text?",
-                "choices": ["A. Option A", "B. Option B", "C. Option C", "D. Option D"],
+                "question": "Which of the following concepts is mentioned in the text?",
+                "choices": ["A. Advanced mathematics", "B. Basic principles", "C. Complex theories", "D. Scientific formulas"],
                 "answer": "B"
             }
         ]

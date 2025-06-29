@@ -26,6 +26,7 @@ if text_input:
             try:
                 # Call backend API for MCQ generation
                 backend_url = "http://localhost:8000/generate_mcq"
+                
                 data = {
                     "text": text_input,
                     "email": st.session_state["user_email"],

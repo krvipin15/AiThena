@@ -1,12 +1,7 @@
 import streamlit as st
-import sys
-import os
+import requests
 
-# Add backend path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from backend.auth import init_db, register_user, authenticate_user
-
-init_db()
+BACKEND_URL = "http://localhost:8000"  # Change if your backend runs elsewhere
 
 st.set_page_config(page_title="Sign In - AiThena", page_icon="🔐")
 
@@ -23,15 +18,26 @@ with tab1:
     login_password = st.text_input("Password", type="password", key="login_password")
 
     if st.button("Login"):
-        success, message = authenticate_user(login_email, login_password)
-        if success:
-            st.session_state["user_email"] = login_email
-            st.session_state["password"] = login_password
-            st.session_state["logged_in"] = True
-            st.success("✅ Login successful! Redirecting to dashboard...")
-            st.rerun()
+        if not login_email or not login_password:
+            st.warning("⚠️ All fields are required.")
         else:
-            st.error(f"❌ {message}")
+            try:
+                response = requests.post(
+                    f"{BACKEND_URL}/login",
+                    json={"email": login_email, "password": login_password},
+                    timeout=10
+                )
+                data = response.json()
+                if response.status_code == 200 and data.get("success"):
+                    st.session_state["user_email"] = login_email
+                    st.session_state["password"] = login_password
+                    st.session_state["logged_in"] = True
+                    st.success("✅ Login successful! Redirecting to dashboard...")
+                    st.rerun()
+                else:
+                    st.error(f"❌ {data.get('message', 'Login failed')}")
+            except Exception as e:
+                st.error(f"❌ Login error: {e}")
 
 with tab2:
     st.subheader("Create a new account:")
@@ -45,8 +51,16 @@ with tab2:
         elif not signup_email or not signup_password:
             st.warning("⚠️ All fields are required.")
         else:
-            success, message = register_user(signup_email, signup_password)
-            if success:
-                st.success("🎉 Account created! Please log in.")
-            else:
-                st.error(f"❌ {message}")
+            try:
+                response = requests.post(
+                    f"{BACKEND_URL}/register",
+                    json={"email": signup_email, "password": signup_password},
+                    timeout=10
+                )
+                data = response.json()
+                if response.status_code == 200 and data.get("success"):
+                    st.success("🎉 Account created! Please log in.")
+                else:
+                    st.error(f"❌ {data.get('message', 'Registration failed')}")
+            except Exception as e:
+                st.error(f"❌ Registration error: {e}")
