@@ -10,3 +10,4 @@ docling
 pathlib
 ibm-watsonx-ai
 youtube-transcript-api
+streamlit
