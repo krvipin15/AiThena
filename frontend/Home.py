@@ -3,7 +3,7 @@ import streamlit as st
 from pathlib import Path
 
 # Initialize image directory path
-img_path = Path("frontend") / "assets" / "logo.png"
+img_path = Path("frontend/assets") / "logo.png"
 
 # Load logo
 logo = Image.open(img_path)

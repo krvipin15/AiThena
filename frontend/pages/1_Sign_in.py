@@ -4,12 +4,16 @@ import os
 
 # Add backend path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from backend.auth import init_db, add_user, authenticate_user
+from backend.auth import init_db, register_user, authenticate_user
 
 # Initialize the DB
 init_db()
 
 st.set_page_config(page_title="Sign In - AiThena", page_icon="🔐")
+
+# Check if user is already logged in and redirect to dashboard
+if "user_email" in st.session_state and st.session_state.get("logged_in", False):
+    st.switch_page("pages/2_Dashboard")
 
 # --- Page Title ---
 st.title("🔐 Sign In to AiThena")
@@ -24,12 +28,15 @@ with tab1:
     login_password = st.text_input("Password", type="password", key="login_password")
 
     if st.button("Login"):
-        if authenticate_user(login_email, login_password):
-            st.success("✅ Login successful!")
+        success, message = authenticate_user(login_email, login_password)
+        if success:
             st.session_state["user_email"] = login_email
-            st.switch_page("2_Dashboard.py")
+            st.session_state["password"] = login_password
+            st.session_state["logged_in"] = True
+            st.success("✅ Login successful! Redirecting to dashboard...")
+            st.rerun()
         else:
-            st.error("❌ Invalid email or password.")
+            st.error(f"❌ {message}")
 
 # --- Sign Up Tab ---
 with tab2:
@@ -44,8 +51,8 @@ with tab2:
         elif signup_email == "" or signup_password == "":
             st.warning("⚠️ All fields are required.")
         else:
-            success = add_user(signup_email, signup_password)
+            success, message = register_user(signup_email, signup_password)
             if success:
                 st.success("🎉 Account created successfully! Please log in.")
             else:
-                st.error("❌ An account with this email already exists.")
+                st.error(f"❌ {message}")
